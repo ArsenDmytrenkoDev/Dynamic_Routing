@@ -1,0 +1,10 @@
+<mat-toolbar>
+  <span>Dynamic Routing</span>
+  <span class="example-spacer"></span>
+  <a
+    *ngFor="let link of links"
+    (click)="changePage(link)"
+  >
+    {{ link }}
+  </a>
+</mat-toolbar>
