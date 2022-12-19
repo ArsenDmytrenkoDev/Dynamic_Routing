@@ -1,19 +1,29 @@
-import { Routes } from "@angular/router";
-import { AdminComponent } from "../pages/admin/admin.component";
-import { ProjectsComponent } from "../pages/projects/projects.component";
-import { UsersComponent } from "../pages/users/users.component";
+import { DynamicRoute } from '../interfaces/dynamic-route.interface';
 
-export const DYNAMIC_ROUTES: Routes = [
+export const DYNAMIC_ROUTES: DynamicRoute[] = [
+  {
+    path: 'home',
+    alias: 'HOME',
+    default: true,
+  },
   {
     path: 'users',
-    component: UsersComponent
+    alias: 'USERS',
+    default: false,
   },
   {
     path: 'projects',
-    component: ProjectsComponent
+    alias: 'PROJECTS',
+    default: false,
   },
   {
     path: 'admin',
-    component: AdminComponent
-  }
-]
+    alias: 'ADMIN',
+    default: false,
+  },
+  {
+    path: 'not-found',
+    alias: '',
+    default: false,
+  },
+];

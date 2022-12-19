@@ -18,7 +18,6 @@ export class NavbarComponent implements OnInit {
   public ngOnInit(): void {
     this.links = this.databaseService
       .getAllRoutes()
-      .slice(0, -2)
       .map((route) => route.path) as string[];
   }
 

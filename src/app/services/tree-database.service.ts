@@ -1,5 +1,5 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 export class TodoItemNode {
   children!: TodoItemNode[];
@@ -14,8 +14,8 @@ const TREE_DATA = {
     Fruits: {
       Apple: {},
       Berries: {
-        'Blueberry': {},
-        'Raspberry': {}
+        Blueberry: {},
+        Raspberry: {},
       },
       Orange: {},
     },
@@ -86,7 +86,9 @@ export class TreeDatabase {
 
   removeNode(parentNode: TodoItemNode, item: string) {
     const nodeCollection = parentNode?.children || this.data;
-    const nodeToRemoveIndex = nodeCollection.findIndex((node: TodoItemNode) => node.item === item);
+    const nodeToRemoveIndex = nodeCollection.findIndex(
+      (node: TodoItemNode) => node.item === item
+    );
     nodeCollection.splice(nodeToRemoveIndex, 1);
     this.dataChange.next(this.data);
   }
