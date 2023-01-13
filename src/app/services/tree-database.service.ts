@@ -1,22 +1,43 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-const TREE_DATA = {
-  'Public*': {
-    'Sign Up*': {},
-    'Sign In*': {},
-    'FAQ*': {},
-  },
-  'Private*': {
-    'Admin*': {},
-  },
-};
-
-const TEST_TREE_DATA = [
+const TEST_TREE_DATA: any[] = [
   {
     isValid: true,
-    children: [],
+    children: [
+      {
+        isValid: true,
+        children: [],
+        item: 'Sign Up',
+        locked: true,
+      },
+      {
+        isValid: true,
+        children: [],
+        item: 'Sign In',
+        locked: true,
+      },
+      {
+        isValid: true,
+        children: [],
+        item: 'FAQ',
+        locked: true,
+      },
+    ],
     item: 'Public',
+    locked: true,
+  },
+  {
+    isValid: true,
+    children: [
+      {
+        isValid: true,
+        children: [],
+        item: 'Admin',
+        locked: true,
+      },
+    ],
+    item: 'Private',
     locked: true,
   },
 ];
@@ -26,8 +47,7 @@ export class TodoItemNode {
   item!: string;
   locked!: boolean;
   isValid!: boolean;
-  treeItemReference!: {[index: string]: any};
-  treeItemReferenceKey!: string;
+  index!: number;
 }
 
 export class TodoItemFlatNode {
@@ -52,7 +72,10 @@ export class TreeDatabase {
   }
 
   constructor() {
-    this.initialize();
+    // this.initialize();
+    const data = this.buildFileTree(TEST_TREE_DATA, 0);
+
+    this.dataChange.next(data);
   }
 
   public insertItem(parent: TodoItemNode) {
@@ -64,11 +87,8 @@ export class TreeDatabase {
         children: [],
         locked: false,
         isValid: true,
-        treeItemReference: parent.treeItemReference[parent.treeItemReferenceKey],
-        treeItemReferenceKey: item,
+        index: parent.children.length,
       } as TodoItemNode);
-
-      parent.treeItemReference[parent.treeItemReferenceKey][item] = {};
 
       this.checkNodeTreeValidity(parent);
       this.dataChange.next(this.data);
@@ -83,27 +103,16 @@ export class TreeDatabase {
     this.lastUpdatedNode = node;
     node.item = name;
 
-    const newKey = `${name}${node.locked ? '*' : ''}`
-    const oldKey = node.treeItemReferenceKey;
-    delete Object.assign(node.treeItemReference!, {
-      [newKey]: node.treeItemReference[oldKey],
-    })[oldKey!];
-    node.treeItemReferenceKey = newKey;
-
     this.checkNodeTreeValidity(parentNode);
     this.dataChange.next(this.data);
   }
 
-  public removeNode(parentNode: TodoItemNode, item: string) {
+  public removeNode(parentNode: TodoItemNode, index: number) {
     const nodeCollection = parentNode?.children || this.data;
-    const nodeToRemoveIndex = nodeCollection.findIndex(
-      (node: TodoItemNode) => node.item === item
-    );
 
-    const node = nodeCollection[nodeToRemoveIndex];
-    delete node.treeItemReference[node.treeItemReferenceKey];
+    nodeCollection.splice(index, 1);
 
-    nodeCollection.splice(nodeToRemoveIndex, 1);
+    this.checkNodeTreeValidity(parentNode);
     this.dataChange.next(this.data);
   }
 
@@ -129,51 +138,33 @@ export class TreeDatabase {
     }
   }
 
-  private initialize(): void {
-    let treeData: { [key: string]: any };
+  // private initialize(): void {
+  //   let treeData: [any];
 
-    const savedTreeData = localStorage.getItem('tree');
-    if (savedTreeData) {
-      treeData = JSON.parse(savedTreeData);
-    } else {
-      treeData = TREE_DATA;
-    }
+  //   const savedTreeData = localStorage.getItem('tree');
+  //   if (savedTreeData) {
+  //     treeData = JSON.parse(savedTreeData);
+  //   } else {
+  //     treeData = TEST_TREE_DATA;
+  //   }
 
-    const data = this.buildFileTree(treeData, 0);
+  //   const data = this.buildFileTree(treeData, 0);
 
-    this.dataChange.next(data);
-  }
+  //   this.dataChange.next(data);
+  // }
 
   private buildFileTree(
-    obj: { [key: string]: any },
+    obj: any[],
     level: number
   ): TodoItemNode[] {
-    return Object.keys(obj).reduce<TodoItemNode[]>((accumulator, key) => {
+    return obj.reduce<TodoItemNode[]>((accumulator, nodeItem, index) => {
       const node = new TodoItemNode();
-      let cleanedKey = '';
 
-      const lockedIndex = key.indexOf('*');
-      if (lockedIndex !== -1) {
-        cleanedKey = key.slice(0, lockedIndex);
-        // delete Object.assign(obj, { [cleanedKey]: obj[key] })[key];
-        node.locked = true;
-      } else {
-        cleanedKey = key;
-        node.locked = false;
-      }
+      Object.assign(node, nodeItem);
+      node.index = index;
 
-      const value = obj[key];
-      node.item = cleanedKey;
-      node.treeItemReference = obj;
-      node.treeItemReferenceKey = key;
-      node.isValid = true;
-
-      if (value != null) {
-        if (typeof value === 'object') {
-          node.children = this.buildFileTree(value, level + 1);
-        } else {
-          node.item = value;
-        }
+      if (node.children.length) {
+        this.buildFileTree(nodeItem.children, level + 1);
       }
 
       return accumulator.concat(node);
@@ -182,13 +173,5 @@ export class TreeDatabase {
 
   public saveTreeData(tree: { [key: string]: any }): void {
     localStorage.setItem('tree', JSON.stringify(tree));
-  }
-
-  private createSimplifiedTreeObject(tree: { [key: string]: any }): void {
-    const simplifiedTree: { [key: string]: any } = {};
-    for (const key of Object.keys(tree)) {
-      const node = tree[key];
-
-    }
   }
 }

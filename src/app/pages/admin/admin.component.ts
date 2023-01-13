@@ -118,12 +118,12 @@ export class AdminComponent implements OnInit, OnDestroy {
 
         if (node === this.selectedNode) {
           this.sidenav.close().then(() => {
-            this._database.removeNode(parentNode!, node.item);
+            this._database.removeNode(parentNode!, node.index);
           });
           return;
         }
 
-        this._database.removeNode(parentNode!, node.item);
+        this._database.removeNode(parentNode!, node.index);
       });
   }
 
