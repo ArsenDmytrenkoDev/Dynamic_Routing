@@ -1,0 +1,7 @@
+<div class="confirmation-dialog container">
+  <h1>{{ data.confirmationText }}</h1>
+  <div class="action-buttons">
+    <button mat-button (click)="onDecline()">No</button>
+    <button mat-button cdkFocusInitial (click)="onAccept()">Yes</button>
+  </div>
+</div>

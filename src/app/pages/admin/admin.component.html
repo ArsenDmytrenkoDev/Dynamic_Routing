@@ -1,28 +1,108 @@
+<mat-sidenav-container>
+  <mat-sidenav #sidenav mode="side" class="example-sidenav" [fixedInViewport]="true" position="end">
+    <ng-container *ngIf="selectedNode">
+      <div class="sidenav-header-container" [formGroup]="nodeForm">
+        <div>
+          <mat-form-field appearance="fill">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="item">
+          </mat-form-field>
+        </div>
+        <div class="action-buttons" *ngIf="!selectedNode.locked">
+          <mat-icon (click)="removeNode($event, selectedNode)">delete</mat-icon>
+        </div>
+      </div>
+
+      <div class="locked-message-container" *ngIf="selectedNode.locked">
+        It's a default route. You can't change or remove it.
+      </div>
+
+      <div class="sidenav-children-container">
+        <mat-accordion class="example-headers-align" multi #accordion>
+          <mat-expansion-panel #expansionPanel [expanded]="true">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Child Routes
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <mat-list>
+              <ng-container *ngFor="let child of selectedNode.children">
+                <mat-list-item class="children-list-item" (click)="onNodeClick(child)">
+                  <span
+                    [class.invalid]="!child.isValid"
+                  >{{ child.item }}</span>
+
+                  <div class="info-icons">
+                    <mat-icon
+                      *ngIf="child.children.length !== 0"
+                      matTooltip="Has nested routes"
+                      matTooltipPosition="above"
+                      matTooltipClass="tooltip"
+                    >
+                      account_tree
+                    </mat-icon>
+                  </div>
+
+                  <div class="action-buttons" *ngIf="!child.locked">
+                    <mat-icon (click)="removeNode($event, child)">delete</mat-icon>
+                  </div>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+              </ng-container>
+
+              <mat-list-item class="add-new-item" (click)="addNewItem(selectedNode)" *ngIf="canAddNewNode(selectedNode)">
+                <span>Add new</span>
+                <mat-icon>add</mat-icon>
+              </mat-list-item>
+            </mat-list>
+
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </ng-container>
+  </mat-sidenav>
+</mat-sidenav-container>
+
 <div class="admin-container">
   <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-    <mat-tree-node *matTreeNodeDef="let node; when: hasNoContent" matTreeNodePadding>
-      <button mat-icon-button disabled></button>
-      <mat-form-field appearance="fill">
-        <mat-label>New item...</mat-label>
-        <input matInput #itemValue placeholder="Ex. Lettuce">
-      </mat-form-field>
-      <button mat-button (click)="saveNode(node, itemValue.value)">Save</button>
-    </mat-tree-node>
-
     <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
-      <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.item" *ngIf="node.expandable"
-        class="toggle-btn">
+      <button
+        mat-icon-button
+        matTreeNodeToggle
+        [attr.aria-label]="'Toggle ' + node.item"
+        *ngIf="node.expandable"
+        class="toggle-btn"
+      >
         <mat-icon class="mat-icon-rtl-mirror">
           {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
         </mat-icon>
       </button>
-      {{node.item}}
-      <button mat-icon-button (click)="removeNode(node)">
-        <mat-icon>remove</mat-icon>
-      </button>
-      <button mat-icon-button (click)="addNewItem(node)">
-        <mat-icon>add</mat-icon>
-      </button>
+
+      <span
+        *ngIf="!node.locked"
+        class="node-text"
+        [class.invalid]="!node.isValid"
+        (click)="onNodeClick(node)"
+      >
+        {{node.item}}
+      </span>
+
+      <span
+        *ngIf="node.locked"
+        class="node-text locked"
+        [class.invalid]="!node.isValid"
+        (click)="onNodeClick(node)"
+        matTooltip="It's a default route"
+        matTooltipPosition="above"
+        matTooltipClass="tooltip"
+      >
+        {{node.item}}
+      </span>
     </mat-tree-node>
   </mat-tree>
+</div>
+
+<div>
+    <button mat-raised-button color="primary" [disabled]="!_database.isValid">Save</button>
 </div>

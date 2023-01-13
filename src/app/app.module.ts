@@ -6,6 +6,7 @@ import { RoutingDatabaseService } from './services/routing-database.service';
 import { SharedModule } from './shared/shared.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app.routing';
+import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 
 function initializeApp(injector: Injector) {
   const routingDatabaseService = injector.get(RoutingDatabaseService);
@@ -13,7 +14,7 @@ function initializeApp(injector: Injector) {
 }
 
 @NgModule({
-  declarations: [AppComponent, NavbarComponent],
+  declarations: [AppComponent, NavbarComponent, ConfirmationDialogComponent],
   imports: [
     BrowserModule,
     SharedModule,

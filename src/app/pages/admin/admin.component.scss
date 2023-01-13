@@ -6,3 +6,126 @@
     margin-left: -8px;
   }
 }
+
+.node-text {
+  padding: 5px;
+  border-radius: 20px;
+
+  transition: background-color linear 0.25s;
+
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgb(219, 219, 219);
+  }
+}
+
+.node-text.locked {
+  color: lightgrey;
+}
+
+.node-text.invalid {
+  color: red;
+}
+
+.example-sidenav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 500px;
+  padding: 10px;
+
+  background: rgba(255, 255, 255);
+
+  .sidenav-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .action-buttons {
+      position: relative;
+      top: -6px;
+      margin-left: 10px;
+
+      mat-icon {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .locked-message-container {
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: 25px;
+
+    text-align: center;
+    font-size: 16px;
+
+    background-color: lightgray;
+  }
+
+  .sidenav-children-container {
+    .children-list-item ::ng-deep {
+      transition: background-color linear 0.25s;
+      cursor: pointer;
+
+      &:hover {
+        background-color: lightgray;
+      }
+
+      .mat-list-item-content {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .info-icons {
+        margin-left: auto;
+
+        mat-icon {
+          margin-left: 15px;
+          color: #b0b0b0;
+        }
+      }
+
+      .action-buttons {
+        margin-left: 15px;
+
+        mat-icon {
+          margin-left: 15px;
+
+          transition: color linear 0.25s;
+          cursor: pointer;
+
+          &:hover {
+            color: red;
+          }
+        }
+      }
+    }
+
+    .add-new-item ::ng-deep {
+      margin-top: 30px;
+      border-radius: 25px;
+
+      background-color: lightgray;
+
+      transition: background-color linear 0.25s;
+      cursor: pointer;
+
+      &:hover {
+        border-radius: 25px;
+        background-color: gray;
+      }
+
+      .mat-list-item-content {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  }
+}
+
+::ng-deep .tooltip {
+  font-size: 16px;
+}

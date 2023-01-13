@@ -19,7 +19,7 @@ export class RoutingDatabaseService {
         const router = this.injector.get(Router);
         router.resetConfig(this.dynamicRoutes);
         resolve();
-      }, 200);
+      }, 2000);
     });
   }
 
